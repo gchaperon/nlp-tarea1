@@ -55,14 +55,14 @@ def get_group_dist(group_name, train):
           train[group_name].groupby('sentiment_intensity').count())
 
 
-def split_dataset(dataset):
+def split_dataset(dataset, seed=8080):
     # Dividir el dataset en train set y test set
     X_train, X_test, y_train, y_test = train_test_split(
         dataset.tweet,
         dataset.sentiment_intensity,
         shuffle=True,
         test_size=0.33,
-        random_state=8080,
+        random_state=seed,
     )
     return X_train, X_test, y_train, y_test
 
