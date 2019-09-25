@@ -1,3 +1,11 @@
+# las weas que tira al correr el scrip
+predictions.zip
+predictions/
+
+# tengo la aux 1 en esta wea, pero mejor no subirla
+aux1/
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -67,7 +75,7 @@ instance/
 docs/_build/
 
 # PyBuilder
-target/
+# target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
