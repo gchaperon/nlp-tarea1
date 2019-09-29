@@ -74,7 +74,7 @@ def main():
             n_repeats=10,
             # shuffle=True,
         ),
-        scoring=make_scorer(cohen_kappa_score),
+        # scoring=make_scorer(cohen_kappa_score),
         verbose=0,
         n_jobs=-1
     )
