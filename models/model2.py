@@ -1,6 +1,5 @@
 """
-Modelo con naive-bayes y usando algun otro vectorizador
-Lo voy a usar para probar cross validation y los clasificadores ensemble
+Aca voy a probar distintas weas con SVM
 """
 import sys
 import logging
@@ -12,13 +11,15 @@ from nltk.sentiment.util import mark_negation
 
 from sklearn.pipeline import make_pipeline
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-from sklearn.naive_bayes import MultinomialNB
+from sklearn.svm import NuSVC, SVC
 from sklearn.model_selection import (cross_val_score,
                                      StratifiedKFold,
                                      KFold,
                                      RepeatedStratifiedKFold)
 from sklearn.metrics import make_scorer, cohen_kappa_score
 
+
+UNWANTED = []
 
 sys.path.append("..")
 from utils import get_data  # noqa: E402
@@ -28,23 +29,6 @@ logging.basicConfig(
     format='%(levelname)s [%(asctime)s] %(message)s',
     datefmt='%H:%M:%S'
 )
-
-# WIP (?)
-UNWANTED = ['.', ',', ';', ':', '\n', '%']
-
-
-tokenizer = TweetTokenizer(
-                # preserve_case=False,
-                strip_handles=True,
-                reduce_len=True,
-            )
-
-
-def my_tokenizer(tweet, tokenizer=tokenizer):
-    """
-    - Parece que algo mejora sacando las palabras muy cortas
-    """
-    return [word for word in tokenizer.tokenize(tweet) if len(word) > 1]
 
 
 def add_negation(tokenizer):
@@ -67,16 +51,16 @@ def main():
             #         # reduce_len=True,
             #     ).tokenize
             # )
-            # tokenizer=TweetTokenizer(
-            #     # preserve_case=False,
-            #     strip_handles=True,
-            #     reduce_len=True,
-            # ).tokenize
-            tokenizer=my_tokenizer
+            tokenizer=TweetTokenizer(
+                preserve_case=False,
+                strip_handles=True,
+                reduce_len=False,
+            ).tokenize
         ),
-        MultinomialNB(
-            alpha=0.15,
-            fit_prior=False,
+        SVC(
+            C=100.,
+            kernel='rbf',
+            gamma='scale'
         ),
         verbose=False
     )
@@ -86,7 +70,8 @@ def main():
         anger_train.tweet,
         anger_train.sentiment_intensity,
         cv=RepeatedStratifiedKFold(
-            n_splits=10,
+            n_splits=5,
+            n_repeats=10,
             # shuffle=True,
         ),
         scoring=make_scorer(cohen_kappa_score),
