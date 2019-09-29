@@ -3,6 +3,7 @@
 # import shutil
 import numpy as np
 import pandas as pd
+import time
 from functools import partial
 
 from sklearn.metrics import (confusion_matrix,
@@ -27,9 +28,17 @@ def auc(test_set, predicted_set):
     auc_med = roc_auc_score(medium_test, medium_predicted)
     auc_low = roc_auc_score(low_test, low_predicted)
 
-    auc_w = (low_test.sum() * auc_low + medium_test.sum() * auc_med +
-             high_test.sum() * auc_high) / (
-                 low_test.sum() + medium_test.sum() + high_test.sum())
+    auc_w = ((
+                low_test.sum() * auc_low +
+                medium_test.sum() * auc_med +
+                high_test.sum() * auc_high
+            )
+            /
+            (
+                low_test.sum() +
+                medium_test.sum() +
+                high_test.sum()
+            ))
     return auc_w
 
 
@@ -55,7 +64,7 @@ def get_group_dist(group_name, train):
           train[group_name].groupby('sentiment_intensity').count())
 
 
-def split_dataset(dataset, seed=8080):
+def split_dataset(dataset, seed=None):
     # Dividir el dataset en train set y test set
     X_train, X_test, y_train, y_test = train_test_split(
         dataset.tweet,
@@ -67,7 +76,7 @@ def split_dataset(dataset, seed=8080):
     return X_train, X_test, y_train, y_test
 
 
-def evaulate(predicted, y_test, labels, key):
+def evaluate(predicted, y_test, labels, key):
     # Importante: al transformar los arreglos de probabilidad a clases,
     # entregar el arreglo de clases aprendido por el clasificador.
     # (que comunmente, es distinto a ['low', 'medium', 'high'])
@@ -115,7 +124,7 @@ def _classify(dataset, key, pipeline):
     learned_labels = text_clf.classes_
 
     # Evaluar
-    evaulate(predicted, y_test, learned_labels, key)
+    evaluate(predicted, y_test, learned_labels, key)
     return text_clf, learned_labels
 
 
