@@ -93,18 +93,18 @@ def main():
         f"(+/- {scores['test_score'].std()*2:0.2f})"
     )
 
-    best = scores["estimator"][np.argmax(scores["test_score"])]
+    # best = scores["estimator"][np.argmax(scores["test_score"])]
 
-    medium = dataset[dataset.sentiment_intensity == "medium"]
-    predicted = best.predict(medium.tweet)
-    print(predicted[:10])
-    print(medium.sentiment_intensity[:10])
+    # medium = dataset[dataset.sentiment_intensity == "medium"]
+    # predicted = best.predict(medium.tweet)
+    # print(predicted[:10])
+    # print(medium.sentiment_intensity[:10])
 
-    print(cohen_kappa_score(
-        medium.sentiment_intensity,
-        predicted,
-        labels=best.classes_
-    ))
+    # print(cohen_kappa_score(
+    #     medium.sentiment_intensity,
+    #     predicted,
+    #     labels=best.classes_
+    # ))
 
 
 if __name__ == '__main__':

@@ -1,11 +1,11 @@
 """
 Aca voy a realizar un filtro terrible a mano de los datos
 """
-
 import sys
 import logging
 import re
 import html
+import string
 from logging import info
 
 from nltk.tokenize import TweetTokenizer
@@ -23,15 +23,16 @@ logging.basicConfig(
 )
 
 UNWANTED = ["#", "$", "%", "&", "'", "(", ")", "*", ",", "-", ".", "..", "/",
-            "<", ">", "@", "{", "}", "~", "£", "óg", "–", "—", "’", "“", "”",
-            "•", "…", "™", "←", "→"]
+            "<", ">", "@", "{", "}", "~", "[", "]", "_", "£", "óg", "–", "—",
+            "’", "“", "”", "•", "…", "™", "←", "→"]
 
 
 def my_filter(token):
     return not (
-        token in UNWANTED or
-        token.startswith("@") or
-        token[0].isdigit()  # revisar este
+        token in UNWANTED
+        or token.startswith("@")
+        or token[0].isdigit()  # revisar este
+        or (len(token) == 1 and token[0] in string.ascii_lowercase)
     )
 
 
@@ -61,6 +62,8 @@ def main():
             reduce_len=True,
             strip_handles=True,
         ).tokenize),
+        stop_words="english",
+        min_df=5,
     )
 
     vec.fit(dataset.tweet)

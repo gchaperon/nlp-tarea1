@@ -148,3 +148,13 @@ def do_the_magic(pipeline):
         learned_labels_array.append(learned_labels)
 
     # TODO TERMINAR ESTA WEA Y GUARDAR DATOS Y ETC
+
+
+def predict_target(dataset, classifier, labels):
+    # Predecir las probabilidades de intensidad de cada elemento del target set.
+    predicted = pd.DataFrame(classifier.predict_proba(dataset.tweet), columns=labels)
+    # Agregar ids
+    predicted['id'] = dataset.id.values
+    # Reordenar
+    predicted = predicted[['id', 'low', 'medium', 'high']]
+    return predicted
