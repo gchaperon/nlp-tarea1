@@ -5,7 +5,6 @@ Lo voy a usar para probar cross validation y los clasificadores ensemble
 import sys
 import logging
 from logging import info
-from functools import partial
 
 from nltk.tokenize import TweetTokenizer
 from nltk.sentiment.util import mark_negation
@@ -19,6 +18,7 @@ from sklearn.model_selection import (cross_val_score,
                                      RepeatedStratifiedKFold)
 from sklearn.metrics import make_scorer, cohen_kappa_score
 
+from representation1 import my_preprocessor, without_unwanted
 
 sys.path.append("..")
 from utils import get_data  # noqa: E402
@@ -28,23 +28,6 @@ logging.basicConfig(
     format='%(levelname)s [%(asctime)s] %(message)s',
     datefmt='%H:%M:%S'
 )
-
-# WIP (?)
-UNWANTED = ['.', ',', ';', ':', '\n', '%']
-
-
-tokenizer = TweetTokenizer(
-                # preserve_case=False,
-                strip_handles=True,
-                reduce_len=True,
-            )
-
-
-def my_tokenizer(tweet, tokenizer=tokenizer):
-    """
-    - Parece que algo mejora sacando las palabras muy cortas
-    """
-    return [word for word in tokenizer.tokenize(tweet) if len(word) > 1]
 
 
 def add_negation(tokenizer):
@@ -61,18 +44,18 @@ def main():
 
     clf = make_pipeline(
         CountVectorizer(
+            preprocessor=my_preprocessor,
             # tokenizer=add_negation(
             #     TweetTokenizer(
             #         strip_handles=True,
             #         # reduce_len=True,
             #     ).tokenize
             # )
-            # tokenizer=TweetTokenizer(
-            #     # preserve_case=False,
-            #     strip_handles=True,
-            #     reduce_len=True,
-            # ).tokenize
-            tokenizer=my_tokenizer
+            tokenizer=without_unwanted(TweetTokenizer(
+                # preserve_case=False,
+                strip_handles=True,
+                reduce_len=True,
+            ).tokenize),
         ),
         MultinomialNB(
             alpha=0.15,

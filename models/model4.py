@@ -95,8 +95,16 @@ def main():
 
     best = scores["estimator"][np.argmax(scores["test_score"])]
 
-    high = dataset[dataset.sentiment_intensity == "medium"]
-    print(accuracy_score(best.predict(high.tweet), high.sentiment_intensity))
+    medium = dataset[dataset.sentiment_intensity == "medium"]
+    predicted = best.predict(medium.tweet)
+    print(predicted[:10])
+    print(medium.sentiment_intensity[:10])
+
+    print(cohen_kappa_score(
+        medium.sentiment_intensity,
+        predicted,
+        labels=best.classes_
+    ))
 
 
 if __name__ == '__main__':

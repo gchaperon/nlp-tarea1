@@ -19,8 +19,7 @@ from sklearn.model_selection import (cross_val_score,
                                      RepeatedStratifiedKFold)
 from sklearn.metrics import make_scorer, cohen_kappa_score
 
-
-UNWANTED = []
+from representation1 import my_preprocessor, without_unwanted
 
 sys.path.append("..")
 from utils import get_data  # noqa: E402
@@ -46,17 +45,23 @@ def main():
 
     clf = make_pipeline(
         CountVectorizer(
+            # preprocessor=my_preprocessor,
             # tokenizer=add_negation(
             #     TweetTokenizer(
             #         strip_handles=True,
             #         # reduce_len=True,
             #     ).tokenize
             # )
+            # tokenizer=without_unwanted(TweetTokenizer(
+            #     preserve_case=True,
+            #     strip_handles=True,
+            #     reduce_len=False,
+            # ).tokenize),
             tokenizer=TweetTokenizer(
                 preserve_case=True,
                 strip_handles=True,
                 reduce_len=False,
-            ).tokenize
+            ).tokenize,
         ),
         SVC(
             C=100.,

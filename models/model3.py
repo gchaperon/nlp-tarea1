@@ -4,7 +4,7 @@ from logging import info
 
 from nltk.tokenize import TweetTokenizer
 
-from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.ensemble import BaggingClassifier
 from sklearn.svm import SVC
 from sklearn.pipeline import make_pipeline
@@ -46,9 +46,9 @@ def main():
                 C=100.,
                 kernel='rbf',
                 gamma='scale',
-                # probability=True,
+                probability=True,
             ),
-            n_estimators=5,
+            n_estimators=10,
             max_samples=1.,
             bootstrap=True,
             n_jobs=-1,
@@ -61,7 +61,7 @@ def main():
         #     probability=True,
         # )
     )
-    info("Calculando cross-validation")
+    info("Calculando cross-validation para el bagging classifier")
     scores = cross_val_score(
         clf,
         data.tweet,
