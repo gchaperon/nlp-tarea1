@@ -7,6 +7,7 @@ from sklearn.pipeline import Pipeline
 sys.path.append("..")
 
 # from utils import auc  # noqa: E402
+import utils  # noqa: E402
 from utils import do_the_magic  # noqa: E402
 
 
