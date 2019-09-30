@@ -10,8 +10,9 @@ sys.path.append("..")
 from utils import do_the_magic  # noqa: E402
 
 
+
 def main():
-    vectorizer = CountVectorizer(tokenizer=TweetTokenizer().tokenize)
+    vectorizer = CountVectorizer()
 
     # Inicializamos el Clasificador.
     naive_bayes = MultinomialNB()
