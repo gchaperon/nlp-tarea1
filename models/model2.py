@@ -1,10 +1,11 @@
 """
 Aca voy a probar distintas weas con SVM
+Hasta ahora este ha sido el mejorcito
 """
+
 import sys
 import logging
 from logging import info
-from functools import partial
 
 from nltk.tokenize import TweetTokenizer
 from nltk.sentiment.util import mark_negation
@@ -52,7 +53,7 @@ def main():
             #     ).tokenize
             # )
             tokenizer=TweetTokenizer(
-                preserve_case=False,
+                preserve_case=True,
                 strip_handles=True,
                 reduce_len=False,
             ).tokenize
@@ -60,7 +61,8 @@ def main():
         SVC(
             C=100.,
             kernel='rbf',
-            gamma='scale'
+            gamma='scale',
+            # probability=True,
         ),
         verbose=False
     )
@@ -74,7 +76,7 @@ def main():
             n_repeats=10,
             # shuffle=True,
         ),
-        # scoring=make_scorer(cohen_kappa_score),
+        scoring=make_scorer(cohen_kappa_score),
         verbose=0,
         n_jobs=-1
     )
