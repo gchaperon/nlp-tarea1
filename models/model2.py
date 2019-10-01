@@ -5,6 +5,7 @@ Hasta ahora este ha sido el mejorcito
 
 import os
 import sys
+import copy 
 import shutil
 import logging
 import numpy as np
@@ -41,12 +42,27 @@ def add_negation(tokenizer):
     return aux
 
 
+def fair_sampling(train, rs):
+    new_train = copy.deepcopy(train)
+    intensities = ['high', 'medium', 'low']
+    for key in new_train:
+        cants = np.array([new_train[key]['id'][new_train[key].sentiment_intensity == tens].count()
+                          for tens in intensities])
+        max_who = intensities[list(cants).index(cants.max())]
+        new_max = int((cants.mean() - cants.max()/3) * 3/2)
+        # Aqui estan los reducidos reducidos
+        max_sample = new_train[key][new_train[key].sentiment_intensity == max_who].sample(new_max, random_state = rs)
+        the_rest = new_train[key][new_train[key].sentiment_intensity != max_who].copy()
+        all_data = the_rest.append(max_sample, ignore_index=True)
+        new_train[key] = all_data
+    return new_train
+
+
 def main():
     # Leer datos
     info("Leyendo datos")
     train, target = get_data("../data")
-    sentiment = "anger"
-    dataset, _ = train[sentiment], target[sentiment]
+    new_train = fair_sampling(train, 8080)
 
     clf = make_pipeline(
         CountVectorizer(
@@ -89,7 +105,7 @@ def main():
         shutil.rmtree('../predictions')
         os.mkdir('../predictions')
 
-    sentiments = ["anger"]  #, "fear", "joy", "sadness"]
+    sentiments = ["anger"]  # , "fear", "joy", "sadness"]
     for sentiment in sentiments:
         dataset_train, dataset_target = train[sentiment], target[sentiment]
         info(f"Calculando cross-validation para {sentiment}")
